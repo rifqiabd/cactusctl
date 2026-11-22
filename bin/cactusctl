@@ -40,6 +40,7 @@ ${C_BOLD}Services${C_RESET}
 
 ${C_BOLD}Background jobs${C_RESET}
   watchdog <act>          status|start|stop
+  reaper <act>            status|check|run|dry|log [n]  (Android cron, tiap 5 mnt)
   monitor <act>           status|run|log
   backup <act>            now|list
 
@@ -75,6 +76,7 @@ case "$cmd" in
   tunnel|tun|cloudflared) cmd_tunnel "$@" ;;
   ssh)                   cmd_ssh "$@" ;;
   watchdog)              cmd_watchdog "$@" ;;
+  reaper)                cmd_reaper "$@" ;;
   monitor)               cmd_monitor "$@" ;;
   backup)                cmd_backup "$@" ;;
   tailscale|ts)          cmd_tailscale "$@" ;;

@@ -193,6 +193,39 @@ cmd_backup() {
   esac
 }
 
+# ---------- idle reaper (Android cron) ----------
+REAPER_SCRIPT="${REAPER_SCRIPT:-/data/adb/idle-reaper.sh}"
+REAPER_LOG="${REAPER_LOG:-/data/local/idle-reaper.log}"
+
+cmd_reaper() {
+  local act="${1:-status}"
+  case "$act" in
+    status)
+      info "idle reaper (Android cron):"
+      android_exec "pgrep -f 'idle-reaper.sh' >/dev/null && echo running || echo stopped; grep -n -F 'gateway\\ run*)' $REAPER_SCRIPT || echo 'GUARD MISSING'"
+      ;;
+    check)
+      if android_exec "grep -q -F 'gateway\\ run*)' $REAPER_SCRIPT" >/dev/null 2>&1; then
+        ok "guard gateway run sudah ada di $REAPER_SCRIPT"
+      else
+        warn "guard 'gateway run' TIDAK ada — Hermes bisa terkena kill tiap 5 menit"
+      fi
+      ;;
+    run)
+      android_exec "sh $REAPER_SCRIPT"
+      ;;
+    dry)
+      info "dry run (tidak benar-benar kill):"
+      android_exec "DRYRUN=1 sh $REAPER_SCRIPT"
+      ;;
+    log)
+      local n="${2:-$LOG_LINES}"
+      android_exec "tail -n $n $REAPER_LOG"
+      ;;
+    *) err "usage: cactusctl reaper {status|check|run|dry|log [n]}"; exit 1;;
+  esac
+}
+
 # ---------- generic service dispatcher ----------
 cmd_service() {
   local name="${1:-}" act="${2:-status}"

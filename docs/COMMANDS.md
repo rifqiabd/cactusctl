@@ -36,6 +36,7 @@ Semua perintah dijalankan sebagai `cactusctl <command> [sub] [args]`.
 |---|---|
 | `watchdog status` | Cek proses `oc2api-watch.sh` |
 | `watchdog start\|stop` | Petunjuk + eksekusi via ADB bridge |
+| `reaper status\|check\|run\|dry\|log [n]` | Idle reaper Android (cron tiap 5 menit). `check` memastikan guard `gateway run` ada supaya Hermes tidak ikut dibunuh |
 | `monitor status\|run\|log` | Monitor server (crond Android, tiap 5 menit) |
 | `backup now\|list` | Jalankan backup / lihat arsip |
 

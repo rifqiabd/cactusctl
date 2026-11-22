@@ -40,6 +40,23 @@ cactusctl android connect
 
 Cek marker `/data/local/.hermes-off`. Hapus lalu `cactusctl hermes on`.
 
+## Hermes mati sendiri tiap ~5 menit (bukan OOM)
+
+`idle-reaper.sh` di Android jalan tiap 5 menit dan dulu membunuh proses yang
+cocok pola `_hermes_closure_repair` atau `/root/.hermes/tools/python*` — pola ini
+juga cocok dengan launcher Hermes versi baru. Cek:
+
+```sh
+cactusctl reaper check
+cactusctl reaper log 10
+```
+
+Guard yang benar harus ada di `/data/adb/idle-reaper.sh`:
+```sh
+case "$(cmd_of "$p")" in *gateway\ run*) continue;; esac
+```
+Tanpa guard itu, reaper akan membunuh gateway meski `suspected_oom=False`.
+
 ## Update gagal / auto-rollback
 
 CLI otomatis memulihkan `opencode2api.bak.<timestamp>` kalau `/healthz` tidak
