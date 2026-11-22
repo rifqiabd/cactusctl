@@ -45,7 +45,7 @@ Semua perintah dijalankan sebagai `cactusctl <command> [sub] [args]`.
 | Perintah | Fungsi |
 |---|---|
 | `tailscale status\|fix` | Cek proses / buka MainActivity via ADB |
-| `headless status\|on\|off` | Matikan UI Android bertahap (console launcher → Launcher3 → SystemUI). `on` mengukur MemAvailable tiap tahap, membuat marker `.server-mode`, dan menyediakan rollback `headless off` |
+| `headless status\|on\|off` | `on` mematikan console launcher + Launcher3 bertahap (ukur MemAvailable tiap tahap, buat marker `.server-mode`). **SystemUI tidak dimatikan by default** — pernah memicu reboot RescueParty. `HEADLESS_FULL=1 cactusctl headless on` untuk memaksa. Rollback: `headless off` |
 | `android connect\|status\|battery\|sshd\|shell <cmd>` | Bridge ADB ke Android (auto-connect) |
 | `reboot` | Reboot perangkat (konfirmasi, butuh ADB) |
 

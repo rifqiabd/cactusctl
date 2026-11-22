@@ -1,6 +1,10 @@
 # cactusctl - Android UI headless mode (disable/enable UI packages via ADB bridge)
 
-HEADLESS_PKGS="com.dvil.tui_renewed com.android.launcher3 com.android.systemui"
+# Paket "aman": matikan tidak memicu RescueParty.
+HEADLESS_SAFE_PKGS="com.dvil.tui_renewed com.android.launcher3"
+# Paket "riskan": SystemUI. Mematikannya pernah memicu reboot RescueParty di device ini.
+HEADLESS_RISK_PKGS="com.android.systemui"
+HEADLESS_PKGS="$HEADLESS_SAFE_PKGS $HEADLESS_RISK_PKGS"
 HEADLESS_PKGS_REVERSE="com.android.systemui com.android.launcher3 com.dvil.tui_renewed"
 
 _headless_mem() {
@@ -61,11 +65,11 @@ headless_on() {
     android_exec 'touch /data/local/.server-mode' >/dev/null 2>&1 || warn "gagal membuat marker"
   fi
 
-  confirm "Matikan UI Android bertahap (console launcher -> launcher3 -> SystemUI)?" \
+  confirm "Matikan console launcher + Launcher3 (SystemUI dibiarakan)?" \
     || { info "dibatalkan"; return 0; }
 
   local p st
-  for p in $HEADLESS_PKGS; do
+  for p in $HEADLESS_SAFE_PKGS; do
     st=$(_headless_pkg_state "$p")
     if [ "$st" = "disabled" ]; then
       info "$p sudah disabled — skip"
@@ -78,7 +82,26 @@ headless_on() {
     printf '  %-24s MemAvailable=%s\n' "$p" "$(_headless_mem)"
   done
 
-  ok "UI dimatikan"
+  if [ "${HEADLESS_FULL:-0}" = "1" ]; then
+    warn "HEADLESS_FULL=1: mematikan SystemUI bisa memicu reboot RescueParty di device ini"
+    if confirm "Yakin tetap matikan SystemUI?"; then
+      for p in $HEADLESS_RISK_PKGS; do
+        st=$(_headless_pkg_state "$p")
+        [ "$st" = "disabled" ] && { info "$p sudah disabled — skip"; continue; }
+        info "disable-user --user 0 $p ..."
+        android_exec "pm disable-user --user 0 $p" 2>&1 | tail -2
+        sleep 20
+        printf '  %-24s MemAvailable=%s\n' "$p" "$(_headless_mem)"
+      done
+    else
+      info "SystemUI dibiarakan"
+    fi
+  else
+    info "SystemUI sengaja tidak dimatikan (aman dari RescueParty)."
+    info "Kalau tetap mau: HEADLESS_FULL=1 cactusctl headless on"
+  fi
+
+  ok "mode headless diterapkan"
   head2 "verifikasi"
   echo "  cactusctl headless status"
   echo "  cactusctl status"

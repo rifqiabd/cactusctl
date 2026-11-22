@@ -63,6 +63,22 @@ CLI otomatis memulihkan `opencode2api.bak.<timestamp>` kalau `/healthz` tidak
 mencapai `status=ok` dalam 150 detik. Cek log restart di
 `/tmp/cactus-update-restart.log` dan `cactusctl log oc2api`.
 
+## Device reboot sendiri setelah `headless on`
+
+Pernah terjadi: mematikan `com.android.systemui` memicu **RescueParty reboot**
+(`/proc/last_kmsg`: `Restarting system with command 'RescueParty'`), bukan OOM dan
+bukan `screenoff-reboot.sh`. Gejalanya: SSH :22 mati, service boot belum naik semua.
+
+Pemulihan:
+```sh
+adb shell 'su -c "pm enable com.android.systemui com.android.launcher3 com.dvil.tui_renewed"'
+adb shell 'su -c "/data/adb/chroot-enter.sh \"/usr/sbin/sshd -E /var/log/sshd.log\""'
+# lalu hidupkan manual: cactusctl hermes on; cactusctl tunnel start; watchdog via ADB
+```
+
+Sejak itu `headless on` **tidak mematikan SystemUI** kecuali dipaksa dengan
+`HEADLESS_FULL=1`. Gain aman dari console launcher + Launcher3 ≈ 250–300 MB.
+
 ## Setelah `headless on`, service tetap jalan tapi UI hilang
 
 Itu memang disengaja. Yang mati: navigation bar, recents, Quick Settings/notification
