@@ -24,7 +24,9 @@ CACTUSCTL_SHA_URL=
 
 # ---------- binary lain ----------
 CLOUDFLARED_URL=
-HERMES_URL=
+HERMES_INSTALL_URL=https://hermes-agent.nousresearch.com/install.sh
+HERMES_REPO=https://github.com/NousResearch/hermes-agent
+HERMES_URL=$HERMES_INSTALL_URL
 TERMUX_APK_URL=
 F_DROID_URL=https://f-droid.org/repo
 

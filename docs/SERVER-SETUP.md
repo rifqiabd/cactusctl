@@ -31,6 +31,20 @@ PC  --SSH :22--> Debian chroot (/data/local/debian)
 | Config gateway | `/opt/oc2api/config.json` | `cactusctl oc2api config` |
 | Tunnel | `/opt/oc2api/cloudflared` | `cactusctl tunnel ...` |
 | Hermes | `/opt/hermes/svc.sh` | `cactusctl hermes ...` |
+| Hermes data | `/mnt/sdcard/server/hermes` (symlink `/root/.hermes`) | installer `HERMES_HOME=/mnt/sdcard/server/hermes` |
+
+Hermes dipasang di SD card karena internal storage mepet. Installer resmi:
+
+```sh
+HERMES_HOME=/mnt/sdcard/server/hermes HERMES_INSTALL_CHANNEL=stable \
+  bash -c 'curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash'
+ln -s /mnt/sdcard/server/hermes /root/.hermes   # kalau belum ada
+cactusctl hermes on
+```
+
+Karena `/root/.hermes` lama (berisi `.env` kredensial Telegram) pernah dihapus,
+jalankan `hermes setup` untuk mengisi ulang provider/messaging sebelum memakai
+gateway Telegram/Discord. Proses gateway + cron scheduler sudah jalan tanpa itu.
 | Watchdog | Android `/data/adb/oc2api-watch.sh` | `cactusctl watchdog status` |
 | Monitor/backup | Android `/data/adb/server-*.sh` | `cactusctl monitor ...` |
 | sshd chroot | `/usr/sbin/sshd`, port 22 | `cactusctl ssh ...` |
