@@ -44,7 +44,7 @@ Semua perintah dijalankan sebagai `cactusctl <command> [sub] [args]`.
 | Perintah | Fungsi |
 |---|---|
 | `tailscale status\|fix` | Cek proses / buka MainActivity via ADB |
-| `android status\|battery\|sshd\|shell <cmd>` | Bridge ADB ke Android |
+| `android connect\|status\|battery\|sshd\|shell <cmd>` | Bridge ADB ke Android (auto-connect) |
 | `reboot` | Reboot perangkat (konfirmasi, butuh ADB) |
 
 ## Maintenance

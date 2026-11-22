@@ -1,24 +1,41 @@
 # cactusctl - system, network, update and configuration functions
 
 # ---------- Android-side bridge (optional adb over TCP) ----------
+android_connect() {
+  cmd_exists "$ADB_BIN" || { warn "adb belum ada: apt install adb"; return 1; }
+  if "$ADB_BIN" -s "$ADB_SERIAL" get-state >/dev/null 2>&1; then
+    return 0
+  fi
+  "$ADB_BIN" connect "$ADB_SERIAL" >/dev/null 2>&1 || true
+  if ! "$ADB_BIN" -s "$ADB_SERIAL" get-state >/dev/null 2>&1; then
+    warn "adb belum authorize ke $ADB_SERIAL"
+    info "coba: adb connect $ADB_SERIAL"
+    info "atau salin adbkey/adbkey.pub yang sudah di-authorize ke /root/.android/"
+    return 1
+  fi
+  return 0
+}
+
 android_exec() {
   local cmd="$*"
-  if cmd_exists "$ADB_BIN"; then
-    "$ADB_BIN" -s "$ADB_SERIAL" shell "su -c \"$cmd\"" 2>&1
-  else
+  if ! cmd_exists "$ADB_BIN"; then
     warn "akses sisi Android butuh adb di chroot: apt install adb"
     info "perintah setara: su -c \"$cmd\""
     return 1
   fi
+  android_connect || return 1
+  "$ADB_BIN" -s "$ADB_SERIAL" shell "su -c \"$cmd\"" 2>&1
 }
 
 cmd_android() {
   case "${1:-status}" in
+    connect)
+      android_connect && ok "terhubung ke $ADB_SERIAL" ;;
     status) android_exec "getprop ro.product.model; getprop ro.build.version.release; uptime" ;;
     battery) android_exec "dumpsys battery | grep -E 'level|status|temperature'" ;;
     shell) shift; android_exec "$*" ;;
     sshd) android_exec "service check activity" ;;
-    *) err "usage: cactusctl android {status|battery|shell <cmd>|sshd}"; exit 1;;
+    *) err "usage: cactusctl android {connect|status|battery|shell <cmd>|sshd}"; exit 1;;
   esac
 }
 

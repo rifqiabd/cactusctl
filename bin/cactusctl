@@ -45,7 +45,7 @@ ${C_BOLD}Background jobs${C_RESET}
 
 ${C_BOLD}Network / system${C_RESET}
   tailscale <act>         status|fix
-  android <act>           status|battery|sshd|shell <cmd>
+  android <act>           connect|status|battery|sshd|shell <cmd>
   reboot                  Reboot device (needs adb bridge)
 
 ${C_BOLD}Maintenance${C_RESET}

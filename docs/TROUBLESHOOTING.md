@@ -27,6 +27,15 @@ cactusctl android status
 Kalau port 5555 mati, nyalakan lewat Termux/SSH 8022 atau reboot (boot script
 `adb-tcp.sh` akan menghidupkannya lagi).
 
+Kalau status device `unauthorized`, kunci adb di chroot belum dipercaya device.
+Salin kunci yang sudah di-authorize dari PC:
+
+```sh
+scp ~/.android/adbkey ~/.android/adbkey.pub root@redmi6a:/root/.android/
+adb kill-server && adb connect 127.0.0.1:5555
+cactusctl android connect
+```
+
 ## Hermes tidak mau nyala setelah reboot
 
 Cek marker `/data/local/.hermes-off`. Hapus lalu `cactusctl hermes on`.
