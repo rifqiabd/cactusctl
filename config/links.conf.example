@@ -3,9 +3,9 @@
 # Garis "#" = placeholder yang belum diisi.
 
 # ---------- repo ----------
-# Repo publik untuk CLI + setup server ini (diisi setelah dibuat di GitHub)
-CACTUSCTL_REPO_URL="#https://github.com/<user>/cactusctl.git"
-SETUP_REPO_URL="#https://github.com/<user>/cactusctl.git"
+# Repo publik untuk CLI + setup server ini
+CACTUSCTL_REPO_URL=https://github.com/rifqiabd/cactusctl.git
+SETUP_REPO_URL=https://github.com/rifqiabd/cactusctl.git
 
 # ---------- opencode2api ----------
 # Kosongkan OC2API_URL untuk auto-resolve aset linux_arm64 terbaru dari GitHub.
