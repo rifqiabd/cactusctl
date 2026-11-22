@@ -1,0 +1,25 @@
+# /etc/cactusctl/cactusctl.conf
+# Semua path bisa disesuaikan. Baris kosong = pakai default bawaan.
+
+OC2API_DIR=/opt/oc2api
+HERMES_DIR=/opt/hermes
+HERMES_HOME_DIR=/root/.hermes
+
+# Endpoint lokal (gateway listen di /opt/oc2api/config.json)
+API_URL=http://127.0.0.1:8080
+
+# Endpoint publik (Cloudflare tunnel)
+PUBLIC_URL=https://oc.thibbilqulub.my.id
+
+# Local API key. Kosongkan untuk dibaca otomatis dari config.json (server_keys[0]).
+LOCAL_KEY=
+
+# Jumlah baris default untuk `cactusctl log`
+LOG_LINES=40
+
+# Bridge Android (opsional). Butuh adb di chroot: apt install adb
+ADB_BIN=adb
+ADB_SERIAL=127.0.0.1:5555
+
+# Watchdog (jalan di sisi Android)
+WATCHDOG_SCRIPT=/data/adb/oc2api-watch.sh

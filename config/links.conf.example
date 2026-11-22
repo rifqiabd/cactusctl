@@ -1,0 +1,33 @@
+# /etc/cactusctl/links.conf
+# Tempat semua link download / repo. Isi nanti sesuai kebutuhan.
+# Garis "#" = placeholder yang belum diisi.
+
+# ---------- repo ----------
+# Repo publik untuk CLI + setup server ini (diisi setelah dibuat di GitHub)
+CACTUSCTL_REPO_URL="#https://github.com/<user>/cactusctl.git"
+SETUP_REPO_URL="#https://github.com/<user>/cactusctl.git"
+
+# ---------- opencode2api ----------
+# Kosongkan OC2API_URL untuk auto-resolve aset linux_arm64 terbaru dari GitHub.
+OC2API_REPO=jasonxu114514/opencode2api
+OC2API_VERSION=latest
+OC2API_URL=
+OC2API_SHA_URL=
+
+# Link alternatif / mirror (isi kalau ada)
+OC2API_MIRROR_URL=
+
+# ---------- cactusctl self-update ----------
+# Boleh raw .sh atau arsip .tar.gz yang berisi bin/cactusctl + lib/
+CACTUSCTL_URL=
+CACTUSCTL_SHA_URL=
+
+# ---------- binary lain ----------
+CLOUDFLARED_URL=
+HERMES_URL=
+TERMUX_APK_URL=
+F_DROID_URL=https://f-droid.org/repo
+
+# ---------- layanan ----------
+DASHBOARD_URL=
+STATUS_PAGE_URL=

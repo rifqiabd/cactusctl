@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# cactusctl - unified server control for the Redmi 6A Debian chroot server.
+# Inspired by serv00 Devil: one entry point for every day-to-day task.
+set -uo pipefail
+
+CACTUS_VERSION="1.0.0"
+
+_here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+if [ -f "$_here/../lib/common.sh" ]; then
+  CACTUS_LIB_DIR="$_here/../lib"
+else
+  CACTUS_LIB_DIR="${CACTUS_LIB_DIR:-/opt/cactusctl/lib}"
+fi
+
+for _lib in common services system; do
+  [ -f "$CACTUS_LIB_DIR/$_lib.sh" ] || { echo "missing lib: $CACTUS_LIB_DIR/$_lib.sh" >&2; exit 1; }
+  . "$CACTUS_LIB_DIR/$_lib.sh"
+done
+unset _lib _here
+
+load_config
+
+usage() {
+  cat <<EOF
+${C_BOLD}cactusctl${C_RESET} v${CACTUS_VERSION} - Redmi 6A server control
+
+${C_BOLD}Monitoring${C_RESET}
+  status                  Dashboard: services, resource, public health
+  info                    Device / OS information
+  disk                    Disk usage
+  net                     Local + public endpoint health
+  log <svc> [n]           Tail log: oc2api|tunnel|hermes|sshd
+
+${C_BOLD}Services${C_RESET}
+  service <name> <act>    Generic control: oc2api|hermes|tunnel|all
+  oc2api <act>            start|stop|restart|status|health|models|test|config|logs
+  hermes <act>            on|off|toggle|start|stop|restart|status|logs
+  tunnel <act>            start|stop|restart|status|logs
+  ssh <act>               status|start|stop|restart  (chroot sshd :22)
+
+${C_BOLD}Background jobs${C_RESET}
+  watchdog <act>          status|start|stop
+  monitor <act>           status|run|log
+  backup <act>            now|list
+
+${C_BOLD}Network / system${C_RESET}
+  tailscale <act>         status|fix
+  android <act>           status|battery|sshd|shell <cmd>
+  reboot                  Reboot device (needs adb bridge)
+
+${C_BOLD}Maintenance${C_RESET}
+  update <what>           check|oc2api|self|list
+  links <act>             show|edit  (download URLs / repo links)
+  config <act>            path|show|edit|reload
+  version                 Print version
+  help                    This help
+
+${C_DIM}Config: $CONF_FILE
+Links : $LINKS_FILE${C_RESET}
+EOF
+}
+
+cmd="${1:-help}"
+[ "$#" -gt 0 ] && shift || true
+
+case "$cmd" in
+  status|s)              cmd_status ;;
+  info|device)           cmd_info ;;
+  disk)                  cmd_disk ;;
+  net|network|health)    cmd_net ;;
+  log|logs)              cmd_logs "$@" ;;
+  service|svc)           cmd_service "$@" ;;
+  oc2api|oc2|gateway)    cmd_oc2api "$@" ;;
+  hermes|hm)             cmd_hermes "$@" ;;
+  tunnel|tun|cloudflared) cmd_tunnel "$@" ;;
+  ssh)                   cmd_ssh "$@" ;;
+  watchdog)              cmd_watchdog "$@" ;;
+  monitor)               cmd_monitor "$@" ;;
+  backup)                cmd_backup "$@" ;;
+  tailscale|ts)          cmd_tailscale "$@" ;;
+  android|adb)           cmd_android "$@" ;;
+  reboot)                cmd_reboot ;;
+  update|up)             cmd_update "$@" ;;
+  links)                 cmd_links "$@" ;;
+  config|cfg)            cmd_config "$@" ;;
+  version|--version|-v)  echo "$CACTUS_VERSION" ;;
+  help|--help|-h|"")     usage ;;
+  *) err "perintah tidak dikenal: $cmd"; echo; usage; exit 1 ;;
+esac
