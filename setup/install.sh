@@ -13,7 +13,7 @@ BIN_LINK="${CACTUS_BIN:-/usr/local/bin/cactusctl}"
 echo "==> install ke $PREFIX"
 mkdir -p "$PREFIX/lib" "$CONF_DIR"
 install -m 755 "$REPO_DIR/bin/cactusctl" "$PREFIX/cactusctl"
-for lib in common services system; do
+for lib in common services system headless; do
   install -m 644 "$REPO_DIR/lib/$lib.sh" "$PREFIX/lib/$lib.sh"
 done
 

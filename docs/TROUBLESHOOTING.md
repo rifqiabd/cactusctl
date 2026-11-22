@@ -63,6 +63,18 @@ CLI otomatis memulihkan `opencode2api.bak.<timestamp>` kalau `/healthz` tidak
 mencapai `status=ok` dalam 150 detik. Cek log restart di
 `/tmp/cactus-update-restart.log` dan `cactusctl log oc2api`.
 
+## Setelah `headless on`, service tetap jalan tapi UI hilang
+
+Itu memang disengaja. Yang mati: navigation bar, recents, Quick Settings/notification
+shade, keyboard, launcher. Yang tetap hidup: sshd chroot :22, ADB :5555,
+opencode2api, Hermes, tunnel, watchdog, Tailscale, `cactusctl`.
+
+Rollback penuh: `cactusctl headless off`. Kalau ADB tidak bisa dipakai, enable manual
+lewat Termux/SSH 8022:
+```sh
+su -c 'pm enable com.android.systemui com.android.launcher3 com.dvil.tui_renewed'
+```
+
 ## SD-Linux belum ter-mount
 
 Butuh 2–5 menit setelah boot (loop device baru tersedia 1–2 menit setelah boot).

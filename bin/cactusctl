@@ -12,7 +12,7 @@ else
   CACTUS_LIB_DIR="${CACTUS_LIB_DIR:-/opt/cactusctl/lib}"
 fi
 
-for _lib in common services system; do
+for _lib in common services system headless; do
   [ -f "$CACTUS_LIB_DIR/$_lib.sh" ] || { echo "missing lib: $CACTUS_LIB_DIR/$_lib.sh" >&2; exit 1; }
   . "$CACTUS_LIB_DIR/$_lib.sh"
 done
@@ -46,6 +46,7 @@ ${C_BOLD}Background jobs${C_RESET}
 
 ${C_BOLD}Network / system${C_RESET}
   tailscale <act>         status|fix
+  headless <act>          status|on|off           (matikan UI Android bertahap + rollback)
   android <act>           connect|status|battery|sshd|shell <cmd>
   reboot                  Reboot device (needs adb bridge)
 
@@ -77,6 +78,7 @@ case "$cmd" in
   ssh)                   cmd_ssh "$@" ;;
   watchdog)              cmd_watchdog "$@" ;;
   reaper)                cmd_reaper "$@" ;;
+  headless)              cmd_headless "$@" ;;
   monitor)               cmd_monitor "$@" ;;
   backup)                cmd_backup "$@" ;;
   tailscale|ts)          cmd_tailscale "$@" ;;
