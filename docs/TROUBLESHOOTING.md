@@ -20,11 +20,12 @@ Gejala: SIM terdeteksi (`gsm.sim.state = LOADED`, operator muncul), tapi tidak a
 aplikasi Telepon dan `resolve-activity -a android.intent.action.DIAL` menjawab
 `No activity found`.
 
-Penyebab di device ini: `com.android.dialer` dan `com.mediatek.ims` masih
-`disabled-user` sisa eksperimen mematikan GSM. Pulihkan:
+Penyebab di device ini: `com.android.dialer`, `com.mediatek.ims`, dan
+`com.android.contacts` masih `disabled-user` sisa eksperimen mematikan GSM. Pulihkan:
 
 ```sh
 adb shell 'su -c "pm enable com.android.dialer"'
+adb shell 'su -c "pm enable com.android.contacts"'
 adb shell 'su -c "pm enable com.mediatek.ims"'
 adb shell 'su -c "pm list packages -d | grep -Ei \"dialer|ims|telecom|phone\""'
 ```
