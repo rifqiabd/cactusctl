@@ -14,6 +14,33 @@ Client harus mengirim `Authorization: Bearer <key>`. Key ada di
 `server_keys[0]` config.json dan otomatis dipakai CLI. Kalau client masih gagal,
 pastikan key di client sama persis (lihat `~/bin/oc2api-test.sh` di device).
 
+## Dialer/telepon tidak muncul setelah pasang SIM
+
+Gejala: SIM terdeteksi (`gsm.sim.state = LOADED`, operator muncul), tapi tidak ada
+aplikasi Telepon dan `resolve-activity -a android.intent.action.DIAL` menjawab
+`No activity found`.
+
+Penyebab di device ini: `com.android.dialer` dan `com.mediatek.ims` masih
+`disabled-user` sisa eksperimen mematikan GSM. Pulihkan:
+
+```sh
+adb shell 'su -c "pm enable com.android.dialer"'
+adb shell 'su -c "pm enable com.mediatek.ims"'
+adb shell 'su -c "pm list packages -d | grep -Ei \"dialer|ims|telecom|phone\""'
+```
+
+Verifikasi:
+
+```sh
+adb shell 'cmd package resolve-activity --brief -a android.intent.action.DIAL'
+adb shell 'am start -a android.intent.action.DIAL -d tel:123'
+adb shell 'dumpsys telecom | grep -i phoneAccount'
+```
+
+`com.android.phone`, `com.android.server.telecom`, dan `android.ext.services`
+jangan pernah di-disable. Kalau airplane mode masih `1`, matikan dengan
+`settings put global airplane_mode_on 0` + broadcast, lalu `svc wifi enable`.
+
 ## Bridge Android tidak jalan
 
 `android`, `reboot`, `watchdog start` butuh `adb` di chroot:
